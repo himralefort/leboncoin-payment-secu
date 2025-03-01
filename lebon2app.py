@@ -47,7 +47,10 @@ def next_page(current_page):
     elif current_page == 'virement':
         return redirect(url_for('reception'))  # Retour à l'accueil
 
+# Le bloc principal de démarrage de l'application Flask
 if __name__ == '__main__':
-       import os
-port = int(os.environ.get('PORT', 5004))  # 5000 est le port par défaut si PORT n'est pas défini
-app.run(debug=True, host='0.0.0.0', port=port)
+    import os
+    # Utilisation de la variable d'environnement 'PORT' ou 5000 comme port par défaut
+    port = int(os.environ.get('PORT', 5000))  # PORT est une variable d'environnement fournie par Render
+    # Démarrage de l'application Flask, écoute sur 0.0.0.0 pour rendre l'application accessible à l'extérieur
+    app.run(debug=True, host='0.0.0.0', port=port)
